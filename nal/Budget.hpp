@@ -1,0 +1,102 @@
+#pragma once
+
+#include <memory>
+#include <algorithm>
+#include <cmath>
+#include "Truth.h"
+
+namespace NAL
+{
+    class Budget
+    {
+    public:
+        inline static double _priority_default = 0.9;
+        inline static double _durability_default = 0.9;
+        inline static double _quality_default = 0.5;
+
+    public:
+        double priority;
+        double durability;
+        double quality;
+        int64_t ts_update = -1;
+
+        Budget(float priority = _priority_default, float durability = _durability_default,
+               float quality = _quality_default)
+            : priority(priority), durability(durability), quality(quality){};
+
+        static auto calc_durability(double half_life_period)
+        {
+            /*
+             *  The decay factor is calculated as follows:
+             *      x(t) = e^(-a*t)
+             *      x(t+hlp) / x(t) = 0.5
+             *      e^(-a*(t+hlp)) / e^(-a*t) = 0.5
+             *      e^(-a*hlp) = 0.5
+             *      -a*hlp = ln(0.5)
+             *      a = -ln(0.5) / hlp
+             *  Durability is calculated as 1 - a.
+             */
+            return 1.0 + std::log(0.5) / half_life_period;
+        }
+
+        inline void decay(double ts_now)
+        {
+            /*
+             *  The priority decays exponentially with time. It converges to quality*Q (where Q is a constant, typically
+             * 0.3) The decay factor is (1-durability).
+             *
+             *  | hlf  | 1-durability |
+             *  | ---- | ------------ |
+             *  |    1 |  0.69314718  |
+             *  |    2 |  0.34657359  |
+             *  |    4 |  0.17328680  |
+             *  |    8 |  0.08664340  |
+             *  |   16 |  0.04332170  |
+             *  |   32 |  0.02166085  |
+             *  |   64 |  0.01083042  |
+             *  |  128 |  0.00541521  |
+             *  |  256 |  0.00270761  |
+             *  |  512 |  0.00135380  |
+             *  | 1024 |  0.00067690  |
+             */
+            static const auto Q = 0.3;
+            if (ts_now > this->ts_update)
+            {
+                auto dt = ts_now - this->ts_update;
+                this->ts_update = ts_now;
+                const auto q = this->quality * Q;
+                this->priority = q + (this->priority - q) * exp(-(1 - this->durability) * dt);
+            }
+        }
+
+        inline void excite_p(double a, double stubbornness = 0.1)
+        {
+            /*
+             *  $\text{d}p = \alpha\times(1-p)\times(1-(1-p)\times\xi)$
+             *  where \alpha is the strength (e.g., the reward), $p$ is the budget’s priority, and $\xi$ is a factor for
+             * stubbornness. If $\xi=1$, it means the priority is not so easy to increase when $p$ is close to $0$. If
+             * $\xi=0$, it means the priority is free to going up. Typically, $\xi=0.1$.
+             */
+            const auto s = std::clamp(stubbornness, 0.0, 1.0);
+            const auto dp = a * (1 - this->priority) * (1 - (1 - this->priority) * s);
+            this->priority += dp;
+            this->priority = std::min(1.0, this->priority);
+        }
+
+        inline void inhibit_p(double a, double stubbornness = 0.1)
+        {
+            /*
+             *  $\text{d}p=-\alpha\times(1-p)×(1-p\times\xi)$
+             *  where \alpha is the strength (e.g., the absolute value of reward), $p$ is the budget’s priority, and
+             * $\xi$ is a factor for stubbornness. If $\xi=1$, it means the priority is not so easy to decrease when p
+             * is close to $1$. If $\xi=0$, it means the priority is free to going down. Typically, $\xi=0.1$.
+             */
+            const auto s = std::clamp(stubbornness, 0.0, 1.0);
+            const auto dp = -a * this->priority * (1 - this->priority * s);
+            this->priority += dp;
+            this->priority = std::max(0.0, this->priority);
+        }
+    };
+
+    void pybind_budget(py::module &m);
+} // namespace NAL

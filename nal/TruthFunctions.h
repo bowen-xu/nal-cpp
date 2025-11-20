@@ -1,0 +1,247 @@
+#pragma once
+
+#include <cmath>
+#include <algorithm>
+#include <numeric>
+#include <vector>
+#include <initializer_list>
+#include "Truth.h"
+#include "ExtendedBooleanFunctions.h"
+#include "UncertaintyMappingFunctions.h"
+
+namespace NAL
+{
+    using namespace std;
+
+    using NAL::pTruth;
+    using NAL::Truth;
+    using std::pair;
+
+    inline auto eternalize(const Truth &truth) { return Truth(truth.f, w_to_c(truth.c, truth.k), truth.k); }
+
+    inline auto eternalize(const Truth &truth, Truth &truth_out)
+    {
+        truth_out.set_fc(truth.f, w_to_c(truth.c, truth.k));
+        truth_out.k = truth.k;
+    }
+
+    /* Revision */
+    inline pair<double, double> F_rev(double wp1, double wp2, double wm1, double wm2) { return {wp1 + wp2, wm1 + wm2}; }
+
+    inline void F_rev(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    {
+        auto &&[wp, wm] = F_rev(truth1.w_p(), truth2.w_p(), truth1.w_m(), truth2.w_m());
+        truth_out.set_w(wp, wp + wm);
+    }
+
+    inline Truth F_rev(const Truth &truth1, const Truth &truth2)
+    {
+        auto truth_out = Truth(truth1.k);
+        F_rev(truth1, truth2, truth_out);
+        return truth_out;
+    }
+
+    /* Negation */
+    inline pair<double, double> F_neg(const double f, const double c) { return {1.0 - f, c}; }
+
+    inline void F_neg(const Truth &truth, Truth &truth_out)
+    {
+        auto &&[f, c] = F_neg(truth.f, truth.c);
+        truth_out.set_fc(f, c);
+    }
+
+    inline Truth F_neg(const Truth &truth)
+    {
+        auto truth_out = Truth(truth.k);
+        F_neg(truth, truth_out);
+        return truth_out;
+    }
+
+    /* Deduction */
+    inline pair<double, double> F_ded(double f1, double f2, double c1, double c2)
+    {
+        double f = And(f1, f2);
+        double c = And(f1, f2, c1, c2);
+        return {f, c};
+    }
+
+    inline void F_ded(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    {
+        auto &&[f, c] = F_ded(truth1.f, truth2.f, truth1.c, truth2.c);
+        truth_out.set_fc(f, c);
+    }
+
+    inline Truth F_ded(const Truth &truth1, const Truth &truth2)
+    {
+        auto truth_out = Truth(truth1.k);
+        F_ded(truth1, truth2, truth_out);
+        return truth_out;
+    }
+
+    /* Analogy */
+    inline pair<double, double> F_ana(double f1, double f2, double c1, double c2)
+    {
+        double f = And(f1, f2);
+        double c = And(f2, c1, c2);
+        return {f, c};
+    }
+
+    inline void F_ana(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    {
+        auto &&[f, c] = F_ana(truth1.f, truth2.f, truth1.c, truth2.c);
+        truth_out.set_fc(f, c);
+    }
+
+    inline Truth F_ana(const Truth &truth1, const Truth &truth2)
+    {
+        auto truth_out = Truth(truth1.k);
+        F_ana(truth1, truth2, truth_out);
+        return truth_out;
+    }
+
+    /* Abduction */
+    inline pair<double, double> F_abd(double f1, double f2, double c1, double c2)
+    {
+        double wp = And(f1, f2, c1, c2);
+        double w = And(f1, c1, c2);
+        return {wp, w};
+    }
+
+    inline void F_abd(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    {
+        auto &&[wp, w] = F_abd(truth1.f, truth2.f, truth1.c, truth2.c);
+        truth_out.set_w(wp, w);
+    }
+
+    inline Truth F_abd(const Truth &truth1, const Truth &truth2)
+    {
+        auto truth_out = Truth(truth1.k);
+        F_abd(truth1, truth2, truth_out);
+        return truth_out;
+    }
+
+    /* Induction */
+    inline pair<double, double> F_ind(double f1, double f2, double c1, double c2)
+    {
+        double wp = And(f1, f2, c1, c2);
+        double w = And(f2, c1, c2);
+        return {wp, w};
+    }
+
+    inline void F_ind(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    {
+        auto &&[wp, w] = F_ind(truth1.f, truth2.f, truth1.c, truth2.c);
+        truth_out.set_w(wp, w);
+    }
+
+    inline Truth F_ind(const Truth &truth1, const Truth &truth2)
+    {
+        auto truth_out = Truth(truth1.k);
+        F_ind(truth1, truth2, truth_out);
+        return truth_out;
+    }
+
+    /* Exemplification */
+    inline pair<double, double> F_exe(double f1, double f2, double c1, double c2)
+    {
+        double wp = And(f1, f2, c1, c2);
+        double w = wp; // And(f1, f2, c1, c2);
+        return {wp, w};
+    }
+
+    inline void F_exe(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    {
+        auto &&[wp, w] = F_exe(truth1.f, truth2.f, truth1.c, truth2.c);
+        truth_out.set_w(wp, w);
+    }
+
+    inline Truth F_exe(const Truth &truth1, const Truth &truth2)
+    {
+        auto truth_out = Truth(truth1.k);
+        F_exe(truth1, truth2, truth_out);
+        return truth_out;
+    }
+
+    /* Comparison */
+    inline pair<double, double> F_com(double f1, double f2, double c1, double c2)
+    {
+        double wp = And(f1, f2, c1, c2);
+        double w = And(Or(f1, f2), c1, c2);
+        return {wp, w};
+    }
+
+    inline void F_com(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    {
+        auto &&[wp, w] = F_com(truth1.f, truth2.f, truth1.c, truth2.c);
+        truth_out.set_w(wp, w);
+    }
+
+    inline Truth F_com(const Truth &truth1, const Truth &truth2)
+    {
+        auto truth_out = Truth(truth1.k);
+        F_com(truth1, truth2, truth_out);
+        return truth_out;
+    }
+
+    /* Choice */
+    inline void F_cho(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    {
+        if (truth1.e() > truth2.e())
+            truth_out.set_fc(truth1.f, truth1.c);
+        else
+            truth_out.set_fc(truth2.f, truth2.c);
+    }
+
+    inline Truth F_cho(const Truth &truth1, const Truth &truth2)
+    {
+        auto truth_out = Truth(truth1.k);
+        F_cho(truth1, truth2, truth_out);
+        return truth_out;
+    }
+
+    inline pTruth F_cho(const pTruth &truth1, const pTruth &truth2)
+    {
+        return truth1->e() > truth2->e() ? truth1 : truth2;
+    }
+
+    /* Intersection */
+    // F_int = F_intersection = lambda f1, c1, f2, c2: (And(f1, f2), And(c1, c2))  # return: f, c
+    inline pair<double, double> F_int(double f1, double f2, double c1, double c2)
+    {
+        double f = And(f1, f2);
+        double c = And(c1, c2);
+        return {f, c};
+    }
+
+    inline void F_int(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    {
+        auto &&[f, c] = F_int(truth1.f, truth2.f, truth1.c, truth2.c);
+        truth_out.set_fc(f, c);
+    }
+
+    inline Truth F_int(const Truth &truth1, const Truth &truth2)
+    {
+        auto truth_out = Truth(truth1.k);
+        F_int(truth1, truth2, truth_out);
+        return truth_out;
+    }
+
+    /* Part-whole
+    (This is not mature yet, and may be changed in future.)
+    */
+    inline pair<double, double> F_prt(double f1, double f2, double c1, double c2, double k = 1.0)
+    {
+        double f = And(f1, f2);
+        double w = And(f1, f2, c1, c2);
+        double c = w_to_c(w, k);
+        return {f, c};
+    }
+
+    inline void F_prt(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    {
+        auto &&[f, c] = F_prt(truth1.f, truth2.f, truth1.c, truth2.c, truth_out.k);
+        truth_out.f = f;
+        truth_out.c = c;
+    }
+
+} // namespace NAL
