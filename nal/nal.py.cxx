@@ -1,4 +1,6 @@
+module;
 #include <pybind11/pybind11.h>
+export module non_axiomatic_logic.pymodule;
 import non_axiomatic_logic.py;
 namespace py = pybind11;
 using namespace NAL;
