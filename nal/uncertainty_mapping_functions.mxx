@@ -1,4 +1,4 @@
-#pragma once
+module;
 
 #include <cmath>
 #include <algorithm>
@@ -6,20 +6,15 @@
 #include <initializer_list>
 #include <tuple>
 #include <utility>
-#include "Truth.h"
+export module non_axomatic_logic:uncertainty_mapping_functions;
+import std;
+import :truth_value;
 
-namespace NAL
+using namespace std;
+
+export namespace NAL
 {
-    using NAL::Truth;
-    using namespace std;
-
-    using NAL::fc_to_w;
-    using NAL::fc_to_w_minus;
-    using NAL::fc_to_w_plus;
-    using NAL::w_to_c;
-    using NAL::w_to_f;
-
-    inline Truth truth_from_w(float w_plus, float w, float k = 1.0)
+    inline TruthV truth_from_w(float w_plus, float w, float k = 1.0)
     {
         float f, c;
         if (w != 0)
@@ -32,10 +27,10 @@ namespace NAL
             f = 0.5;
             c = 0.0;
         }
-        return Truth(f, c, k);
+        return TruthV(f, c, k);
     }
 
-    inline void w_from_truth(Truth &truth, double &o__w_plus, double &o__w_minus)
+    inline void w_from_truth(TruthV &truth, double &o__w_plus, double &o__w_minus)
     {
         auto &f = truth.f;
         auto &c = truth.c;
@@ -44,7 +39,7 @@ namespace NAL
         o__w_minus = fc_to_w_minus(f, c, k);
     }
 
-    inline pair<double, double> w_from_truth(Truth &truth)
+    inline pair<double, double> w_from_truth(TruthV &truth)
     {
         double w_plus, w_minus;
         w_from_truth(truth, w_plus, w_minus);

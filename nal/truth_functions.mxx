@@ -1,25 +1,22 @@
-#pragma once
-
+module;
 #include <cmath>
 #include <algorithm>
 #include <numeric>
 #include <vector>
 #include <initializer_list>
-#include "Truth.h"
-#include "ExtendedBooleanFunctions.h"
-#include "UncertaintyMappingFunctions.h"
+export module non_axomatic_logic:truth_functions;
+import std;
+import :extended_boolean_functions;
+import :uncertainty_mapping_functions;
+import :truth_value;
 
-namespace NAL
+using namespace std;
+export namespace NAL
 {
-    using namespace std;
 
-    using NAL::pTruth;
-    using NAL::Truth;
-    using std::pair;
+    inline auto eternalize(const TruthV &truth) { return TruthV(truth.f, w_to_c(truth.c, truth.k), truth.k); }
 
-    inline auto eternalize(const Truth &truth) { return Truth(truth.f, w_to_c(truth.c, truth.k), truth.k); }
-
-    inline auto eternalize(const Truth &truth, Truth &truth_out)
+    inline auto eternalize(const TruthV &truth, TruthV &truth_out)
     {
         truth_out.set_fc(truth.f, w_to_c(truth.c, truth.k));
         truth_out.k = truth.k;
@@ -28,15 +25,15 @@ namespace NAL
     /* Revision */
     inline pair<double, double> F_rev(double wp1, double wp2, double wm1, double wm2) { return {wp1 + wp2, wm1 + wm2}; }
 
-    inline void F_rev(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    inline void F_rev(const TruthV &truth1, const TruthV &truth2, TruthV &truth_out)
     {
         auto &&[wp, wm] = F_rev(truth1.w_p(), truth2.w_p(), truth1.w_m(), truth2.w_m());
         truth_out.set_w(wp, wp + wm);
     }
 
-    inline Truth F_rev(const Truth &truth1, const Truth &truth2)
+    inline TruthV F_rev(const TruthV &truth1, const TruthV &truth2)
     {
-        auto truth_out = Truth(truth1.k);
+        auto truth_out = TruthV(truth1.k);
         F_rev(truth1, truth2, truth_out);
         return truth_out;
     }
@@ -44,15 +41,15 @@ namespace NAL
     /* Negation */
     inline pair<double, double> F_neg(const double f, const double c) { return {1.0 - f, c}; }
 
-    inline void F_neg(const Truth &truth, Truth &truth_out)
+    inline void F_neg(const TruthV &truth, TruthV &truth_out)
     {
         auto &&[f, c] = F_neg(truth.f, truth.c);
         truth_out.set_fc(f, c);
     }
 
-    inline Truth F_neg(const Truth &truth)
+    inline TruthV F_neg(const TruthV &truth)
     {
-        auto truth_out = Truth(truth.k);
+        auto truth_out = TruthV(truth.k);
         F_neg(truth, truth_out);
         return truth_out;
     }
@@ -65,15 +62,15 @@ namespace NAL
         return {f, c};
     }
 
-    inline void F_ded(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    inline void F_ded(const TruthV &truth1, const TruthV &truth2, TruthV &truth_out)
     {
         auto &&[f, c] = F_ded(truth1.f, truth2.f, truth1.c, truth2.c);
         truth_out.set_fc(f, c);
     }
 
-    inline Truth F_ded(const Truth &truth1, const Truth &truth2)
+    inline TruthV F_ded(const TruthV &truth1, const TruthV &truth2)
     {
-        auto truth_out = Truth(truth1.k);
+        auto truth_out = TruthV(truth1.k);
         F_ded(truth1, truth2, truth_out);
         return truth_out;
     }
@@ -86,15 +83,15 @@ namespace NAL
         return {f, c};
     }
 
-    inline void F_ana(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    inline void F_ana(const TruthV &truth1, const TruthV &truth2, TruthV &truth_out)
     {
         auto &&[f, c] = F_ana(truth1.f, truth2.f, truth1.c, truth2.c);
         truth_out.set_fc(f, c);
     }
 
-    inline Truth F_ana(const Truth &truth1, const Truth &truth2)
+    inline TruthV F_ana(const TruthV &truth1, const TruthV &truth2)
     {
-        auto truth_out = Truth(truth1.k);
+        auto truth_out = TruthV(truth1.k);
         F_ana(truth1, truth2, truth_out);
         return truth_out;
     }
@@ -107,15 +104,15 @@ namespace NAL
         return {wp, w};
     }
 
-    inline void F_abd(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    inline void F_abd(const TruthV &truth1, const TruthV &truth2, TruthV &truth_out)
     {
         auto &&[wp, w] = F_abd(truth1.f, truth2.f, truth1.c, truth2.c);
         truth_out.set_w(wp, w);
     }
 
-    inline Truth F_abd(const Truth &truth1, const Truth &truth2)
+    inline TruthV F_abd(const TruthV &truth1, const TruthV &truth2)
     {
-        auto truth_out = Truth(truth1.k);
+        auto truth_out = TruthV(truth1.k);
         F_abd(truth1, truth2, truth_out);
         return truth_out;
     }
@@ -128,15 +125,15 @@ namespace NAL
         return {wp, w};
     }
 
-    inline void F_ind(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    inline void F_ind(const TruthV &truth1, const TruthV &truth2, TruthV &truth_out)
     {
         auto &&[wp, w] = F_ind(truth1.f, truth2.f, truth1.c, truth2.c);
         truth_out.set_w(wp, w);
     }
 
-    inline Truth F_ind(const Truth &truth1, const Truth &truth2)
+    inline TruthV F_ind(const TruthV &truth1, const TruthV &truth2)
     {
-        auto truth_out = Truth(truth1.k);
+        auto truth_out = TruthV(truth1.k);
         F_ind(truth1, truth2, truth_out);
         return truth_out;
     }
@@ -149,15 +146,15 @@ namespace NAL
         return {wp, w};
     }
 
-    inline void F_exe(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    inline void F_exe(const TruthV &truth1, const TruthV &truth2, TruthV &truth_out)
     {
         auto &&[wp, w] = F_exe(truth1.f, truth2.f, truth1.c, truth2.c);
         truth_out.set_w(wp, w);
     }
 
-    inline Truth F_exe(const Truth &truth1, const Truth &truth2)
+    inline TruthV F_exe(const TruthV &truth1, const TruthV &truth2)
     {
-        auto truth_out = Truth(truth1.k);
+        auto truth_out = TruthV(truth1.k);
         F_exe(truth1, truth2, truth_out);
         return truth_out;
     }
@@ -170,21 +167,21 @@ namespace NAL
         return {wp, w};
     }
 
-    inline void F_com(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    inline void F_com(const TruthV &truth1, const TruthV &truth2, TruthV &truth_out)
     {
         auto &&[wp, w] = F_com(truth1.f, truth2.f, truth1.c, truth2.c);
         truth_out.set_w(wp, w);
     }
 
-    inline Truth F_com(const Truth &truth1, const Truth &truth2)
+    inline TruthV F_com(const TruthV &truth1, const TruthV &truth2)
     {
-        auto truth_out = Truth(truth1.k);
+        auto truth_out = TruthV(truth1.k);
         F_com(truth1, truth2, truth_out);
         return truth_out;
     }
 
     /* Choice */
-    inline void F_cho(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    inline void F_cho(const TruthV &truth1, const TruthV &truth2, TruthV &truth_out)
     {
         if (truth1.e() > truth2.e())
             truth_out.set_fc(truth1.f, truth1.c);
@@ -192,14 +189,14 @@ namespace NAL
             truth_out.set_fc(truth2.f, truth2.c);
     }
 
-    inline Truth F_cho(const Truth &truth1, const Truth &truth2)
+    inline TruthV F_cho(const TruthV &truth1, const TruthV &truth2)
     {
-        auto truth_out = Truth(truth1.k);
+        auto truth_out = TruthV(truth1.k);
         F_cho(truth1, truth2, truth_out);
         return truth_out;
     }
 
-    inline pTruth F_cho(const pTruth &truth1, const pTruth &truth2)
+    inline pTruthV F_cho(const pTruthV &truth1, const pTruthV &truth2)
     {
         return truth1->e() > truth2->e() ? truth1 : truth2;
     }
@@ -213,15 +210,15 @@ namespace NAL
         return {f, c};
     }
 
-    inline void F_int(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    inline void F_int(const TruthV &truth1, const TruthV &truth2, TruthV &truth_out)
     {
         auto &&[f, c] = F_int(truth1.f, truth2.f, truth1.c, truth2.c);
         truth_out.set_fc(f, c);
     }
 
-    inline Truth F_int(const Truth &truth1, const Truth &truth2)
+    inline TruthV F_int(const TruthV &truth1, const TruthV &truth2)
     {
-        auto truth_out = Truth(truth1.k);
+        auto truth_out = TruthV(truth1.k);
         F_int(truth1, truth2, truth_out);
         return truth_out;
     }
@@ -237,7 +234,7 @@ namespace NAL
         return {f, c};
     }
 
-    inline void F_prt(const Truth &truth1, const Truth &truth2, Truth &truth_out)
+    inline void F_prt(const TruthV &truth1, const TruthV &truth2, TruthV &truth_out)
     {
         auto &&[f, c] = F_prt(truth1.f, truth2.f, truth1.c, truth2.c, truth_out.k);
         truth_out.f = f;

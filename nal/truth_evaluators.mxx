@@ -1,35 +1,33 @@
-#pragma once
-
+module;
 #include <cmath>
 #include <type_traits>
-#include "Truth.h"
+export module non_axomatic_logic.truth_evaluators;
+import std;
+import non_axomatic_logic;
 
-namespace NAL
+export namespace NAL
 {
-    using NAL::DesireValue;
-    using NAL::Truth;
-
     inline double novelty(const auto &truth1, const auto &truth2)
-        requires std::is_same_v<std::decay_t<decltype(truth1)>, Truth> &&
-                 std::is_same_v<std::decay_t<decltype(truth2)>, Truth>
+        requires std::is_same_v<std::decay_t<decltype(truth1)>, TruthV> &&
+                 std::is_same_v<std::decay_t<decltype(truth2)>, TruthV>
     {
         return std::abs(truth1.e() - truth2.e());
     }
 
     inline double utility(const auto &truth)
-        requires std::is_same_v<std::decay_t<decltype(truth)>, Truth>
+        requires std::is_same_v<std::decay_t<decltype(truth)>, TruthV>
     {
         return truth.e() - 0.5;
     }
 
-    inline double achieving_level(const Truth &truth, const DesireValue &desire)
+    inline double achieving_level(const TruthV &truth, const DesireV &desire)
     {
         return 1.0 - std::abs(desire.e() - truth.e());
     }
 
-    inline double achieving_level(const DesireValue &desire) { return 1.0 - std::abs(desire.e() - 0.5); }
+    inline double achieving_level(const DesireV &desire) { return 1.0 - std::abs(desire.e() - 0.5); }
 
-    inline double sharpness(const Truth &truth) { return 2 * std::abs(truth.e() - 0.5); }
+    inline double sharpness(const TruthV &truth) { return 2 * std::abs(truth.e() - 0.5); }
 
     inline double reward(double novelty, double utility)
     {

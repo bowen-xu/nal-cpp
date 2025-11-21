@@ -1,14 +1,10 @@
-#pragma once
+export module non_axomatic_logic:extended_boolean_functions;
+import std;
 
-#include <cmath>
-#include <algorithm>
-#include <numeric>
-#include <vector>
-#include <initializer_list>
+using namespace std;
 
-namespace NAL
+export namespace NAL
 {
-    using namespace std;
 
     /* Extended Boolean Functions */
     inline double And(double x1, double x2) { return x1 * x2; }

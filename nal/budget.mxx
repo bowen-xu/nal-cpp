@@ -1,13 +1,16 @@
-#pragma once
+module;
+#include <cstdint>
 
-#include <memory>
-#include <algorithm>
-#include <cmath>
-#include "Truth.h"
+export module non_axomatic_logic:budget;
+import std;
+import smart_ref;
 
-namespace NAL
+export namespace NAL
 {
-    class Budget
+    struct Budget;
+    using pBudget = smart_ref::shared_ref<Budget>;
+
+    struct Budget
     {
     public:
         inline static double _priority_default = 0.9;
@@ -22,7 +25,7 @@ namespace NAL
 
         Budget(float priority = _priority_default, float durability = _durability_default,
                float quality = _quality_default)
-            : priority(priority), durability(durability), quality(quality){};
+            : priority(priority), durability(durability), quality(quality) {};
 
         static auto calc_durability(double half_life_period)
         {
@@ -65,7 +68,7 @@ namespace NAL
                 auto dt = ts_now - this->ts_update;
                 this->ts_update = ts_now;
                 const auto q = this->quality * Q;
-                this->priority = q + (this->priority - q) * exp(-(1 - this->durability) * dt);
+                this->priority = q + (this->priority - q) * std::exp(-(1 - this->durability) * dt);
             }
         }
 
@@ -96,7 +99,12 @@ namespace NAL
             this->priority += dp;
             this->priority = std::max(0.0, this->priority);
         }
+
+        static pBudget create(float priority = _priority_default, float durability = _durability_default,
+                              float quality = _quality_default)
+        {
+            return pBudget(new Budget(priority, durability, quality));
+        }
     };
 
-    void pybind_budget(py::module &m);
 } // namespace NAL
