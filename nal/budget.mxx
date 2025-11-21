@@ -1,7 +1,7 @@
 module;
 #include <cstdint>
 
-export module non_axomatic_logic:budget;
+export module non_axiomatic_logic:budget;
 import std;
 import smart_ref;
 

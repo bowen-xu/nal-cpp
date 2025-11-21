@@ -4,7 +4,7 @@ module;
 #include <numeric>
 #include <vector>
 #include <initializer_list>
-export module non_axomatic_logic:truth_functions;
+export module non_axiomatic_logic:truth_functions;
 import std;
 import :extended_boolean_functions;
 import :uncertainty_mapping_functions;

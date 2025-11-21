@@ -1,9 +1,9 @@
 module;
 #include <cmath>
 #include <type_traits>
-export module non_axomatic_logic.truth_evaluators;
+export module non_axiomatic_logic.truth_evaluators;
 import std;
-import non_axomatic_logic;
+import non_axiomatic_logic;
 
 export namespace NAL
 {

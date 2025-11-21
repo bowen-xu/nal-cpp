@@ -3,8 +3,8 @@ module;
 #include <fmt/core.h>
 #include <cstdint>
 
-export module non_axomatic_logic.py:budget;
-import non_axomatic_logic;
+export module non_axiomatic_logic.py:budget;
+import non_axiomatic_logic;
 
 namespace py = pybind11;
 

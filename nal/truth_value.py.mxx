@@ -1,8 +1,8 @@
 module;
 #include <pybind11/pybind11.h>
-export module non_axomatic_logic.py:truth_value;
+export module non_axiomatic_logic.py:truth_value;
 import std;
-import non_axomatic_logic;
+import non_axiomatic_logic;
 namespace py = pybind11;
 export namespace NAL
 {

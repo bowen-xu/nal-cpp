@@ -2,9 +2,9 @@ module;
 #include <fmt/core.h>
 #include "Config.h"
 
-export module non_axomatic_logic:truth_value;
+export module non_axiomatic_logic:truth_value;
 import std;
-import non_axomatic_logic.utils;
+import non_axiomatic_logic.utils;
 import smart_ref;
 import smart_ref.pybind11;
 

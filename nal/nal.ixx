@@ -1,4 +1,4 @@
-export module non_axomatic_logic;
+export module non_axiomatic_logic;
 
 export import :budget;
 export import :truth_value;

@@ -6,7 +6,7 @@ module;
 #include <initializer_list>
 #include <tuple>
 #include <utility>
-export module non_axomatic_logic:uncertainty_mapping_functions;
+export module non_axiomatic_logic:uncertainty_mapping_functions;
 import std;
 import :truth_value;
 

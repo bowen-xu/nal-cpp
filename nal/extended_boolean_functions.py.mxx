@@ -1,9 +1,9 @@
 module;
 #include <pybind11/pybind11.h>
 
-export module non_axomatic_logic.py:extended_boolean_functions;
+export module non_axiomatic_logic.py:extended_boolean_functions;
 import std;
-import non_axomatic_logic;
+import non_axiomatic_logic;
 
 namespace py = pybind11;
 using namespace std;

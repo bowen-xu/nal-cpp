@@ -1,4 +1,4 @@
-export module non_axomatic_logic:extended_boolean_functions;
+export module non_axiomatic_logic:extended_boolean_functions;
 import std;
 
 using namespace std;

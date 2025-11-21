@@ -1,5 +1,5 @@
 #include <pybind11/pybind11.h>
-import non_axomatic_logic.py;
+import non_axiomatic_logic.py;
 namespace py = pybind11;
 using namespace NAL;
 PYBIND11_MODULE(nal, m)
