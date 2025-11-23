@@ -56,5 +56,5 @@ target("non-axiomatic-logic")
     add_packages("pybind11")
     add_packages("fmt")
 
-    add_includedirs("nal", {public = true})
+    add_includedirs(".", {public = true})
     add_files(srcs)
