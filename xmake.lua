@@ -38,12 +38,13 @@ add_requires("fmt")
 --         os.exec(py .. " --version")
 --         os.exec(py .. " " .. py_root .. "/_generate_stub.py " .. " --root " .. module_dir .. " -p " .. target:name() .. " --single True")
 --     end)
-nal_pybind_srcs = "deps/nal-cpp/nal/nal.py.cxx"
+
+nal_pybind_srcs = "deps/nal-cpp/nal/nal.py.cpp"
 
 -- nal_pybind_srcs = os.files("nal/*.py.cxx", {rootdir = os.scriptdir()})
 
 
-local srcs = os.files("nal/*.py.cxx")
+local srcs = os.files("nal/**.py.cpp")
 nal_pybind_srcs = {}
 for _, v in ipairs(srcs) do
     table.insert(nal_pybind_srcs, path.join(os.scriptdir(), v))
@@ -55,10 +56,5 @@ target("non-axiomatic-logic")
     add_packages("pybind11")
     add_packages("fmt")
 
-    add_deps("smart_ref")
-
-    add_files(
-        "nal/**.mxx", 
-        "nal/**.ixx", 
-        -- "nal/**.cxx",
-        {public = true})
+    add_includedirs("nal", {public = true})
+    add_files(srcs)

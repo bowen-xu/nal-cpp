@@ -1,11 +1,10 @@
-module;
-
+#pragma once
 #include <cmath>
-export module non_axiomatic_logic.utils;
-import std;
-export namespace NAL
-{
+#include <cstdint>
+#include "utils.hpp"
 
+namespace NAL
+{
     namespace UTILS
     {
 
@@ -36,5 +35,4 @@ export namespace NAL
             return value * std::exp(-alpha * dt);
         }
     } // namespace UTILS
-
 } // namespace NAL
