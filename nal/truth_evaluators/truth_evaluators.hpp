@@ -6,11 +6,18 @@
 
 namespace NAL
 {
-inline double novelty(const auto &truth1, const auto &truth2)
-    requires std::is_same_v<std::decay_t<decltype(truth1)>, TruthV> &&
-             std::is_same_v<std::decay_t<decltype(truth2)>, TruthV>
+inline double novelty(const auto &truth_src, const auto &truth_tgt)
+    requires std::is_same_v<std::decay_t<decltype(truth_src)>, TruthV> &&
+             std::is_same_v<std::decay_t<decltype(truth_tgt)>, TruthV>
 {
-    return std::abs(truth1.e() - truth2.e());
+    return std::abs(truth_src.e() - truth_tgt.e());
+}
+
+inline double novelty_v1(const auto &truth_src, const auto &truth_tgt)
+    requires std::is_same_v<std::decay_t<decltype(truth_src)>, TruthV> &&
+             std::is_same_v<std::decay_t<decltype(truth_tgt)>, TruthV>
+{
+    return std::sqrt(std::abs(truth_src.e() - truth_tgt.e()) * truth_src.c);
 }
 
 inline double utility(const auto &truth)

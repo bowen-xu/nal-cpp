@@ -29,14 +29,14 @@ void pybind__truth_value(py::module &m)
         .def_readwrite("k", &TruthV::k)
         .def_readwrite("ts_update", &TruthV::ts_update)
         .def_property_readonly("e", &TruthV::e)
-        .def("revise", py::overload_cast<const TruthV &>(&TruthV::revise), py::arg("truth"))
-        .def("revise", py::overload_cast<double, double>(&TruthV::revise_w), py::arg("w_p"), py::arg("w"))
-        .def("revise", py::overload_cast<TruthV &, int64_t, int64_t>(&TruthV::revise), py::arg("truth"),
-             py::arg("ts_now"), py::arg("duration") = 20)
-        .def("revise", py::overload_cast<double, double, int64_t, int64_t>(&TruthV::revise_w), py::arg("w_p"),
-             py::arg("w"), py::arg("ts_now"), py::arg("duration") = 20)
-        // .def("project", &TruthV::project, py::arg("ts_now"), py::arg("duration") = 20, py::arg("forward_only") =
-        // true)
+     //    .def("revise", py::overload_cast<const TruthV &>(&TruthV::revise), py::arg("truth"))
+     //    .def("revise", py::overload_cast<double, double>(&TruthV::revise_w), py::arg("w_p"), py::arg("w"))
+     //    .def("revise", py::overload_cast<TruthV &, int64_t, int64_t>(&TruthV::revise), py::arg("truth"),
+     //         py::arg("ts_now"), py::arg("duration") = 20)
+     //    .def("revise", py::overload_cast<double, double, int64_t, int64_t>(&TruthV::revise_w), py::arg("w_p"),
+     //         py::arg("w"), py::arg("ts_now"), py::arg("duration") = 20)
+     //    // .def("project", &TruthV::project, py::arg("ts_now"), py::arg("duration") = 20, py::arg("forward_only") =
+     //    // true)
         .def("set_fc", py::overload_cast<double, double>(&TruthV::set_fc), py::arg("f"), py::arg("c"))
         .def("set_fc", py::overload_cast<double, double, int64_t>(&TruthV::set_fc), py::arg("f"), py::arg("c"),
              py::arg("ts_update"))

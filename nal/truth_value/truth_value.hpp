@@ -16,7 +16,6 @@ public:
     bool is_eternal = true;
 
     TruthV(double f, double c, double k = 1.0) : f(f), c(c), k(k) {};
-    // Truth(float f, float c, float k = 1.0) : f(f), c(c), k(k) {};
     TruthV(double f, double c, bool is_temporal, int64_t ts_update = -1, double k = 1.0)
         : f(f), c(c), k(k), is_eternal(!is_temporal), ts_update(ts_update) {};
     TruthV(double k = 1.0) : f(CONFIG::f), c(CONFIG::c), k(k) {};
@@ -73,51 +72,45 @@ public:
         this->set_w(w_p, w);
     }
 
-    inline void revise(TruthV &truth, int64_t ts_now, int64_t duration = 20)
-    {
-        this->project(ts_now, duration);
-        this->revise(truth);
-    }
+    // inline void revise(TruthV &truth, int64_t ts_now, int64_t duration = 20)
+    // {
+    //     this->project(ts_now, duration);
+    //     this->revise(truth);
+    // }
 
-    inline void revise_w(double w_p, double w)
-    {
-        w_p = this->w_p() + w_p;
-        w = this->w() + w;
-        this->set_w(w_p, w);
-    }
+    // inline void revise_w(double w_p, double w)
+    // {
+    //     w_p = this->w_p() + w_p;
+    //     w = this->w() + w;
+    //     this->set_w(w_p, w);
+    // }
 
-    inline void revise_w(std::common_type_t<double, int> w_p, std::common_type_t<double, int> w, int64_t ts_now,
-                         int64_t duration = 20)
-    {
-        this->project(ts_now, duration);
-        this->revise_w(w_p, w);
-    }
+    // inline void revise_w(std::common_type_t<double, int> w_p, std::common_type_t<double, int> w, int64_t ts_now,
+    //                      int64_t duration = 20)
+    // {
+    //     this->project(ts_now, duration);
+    //     this->revise_w(w_p, w);
+    // }
 
-    inline void project(int64_t ts_now, int64_t duration = 20, bool forward_only = true)
-    {
-        if (!this->is_eternal)
-        {
-            if (!forward_only || this->ts_update < ts_now)
-            {
-                auto dt = std::abs(ts_now - this->ts_update);
-                this->c = UTILS::decay(this->c, UTILS::get_decay_factor(duration), dt);
-            }
-            this->ts_update = ts_now;
-        }
-    }
+    // inline void project(int64_t ts_now, int64_t duration = 20, bool forward_only = true)
+    // {
+    //     if (!this->is_eternal)
+    //     {
+    //         if (!forward_only || this->ts_update < ts_now)
+    //         {
+    //             auto dt = std::abs(ts_now - this->ts_update);
+    //             this->c = UTILS::decay(this->c, UTILS::get_decay_factor(duration), dt);
+    //         }
+    //         this->ts_update = ts_now;
+    //     }
+    // }
 
-    static TruthV project(const TruthV &truth, int64_t ts_now, int64_t duration = 20, bool forward_only = true)
+    static TruthV
+    project(const TruthV &truth, int64_t t_src, int64_t t_tgt, int64_t duration = 20)
     {
         auto truth_out = TruthV(truth);
-        if (!truth.is_eternal)
-        {
-            if (!forward_only || truth.ts_update < ts_now)
-            {
-                auto dt = std::abs(ts_now - truth.ts_update);
-                truth_out.c = UTILS::decay(truth.c, UTILS::get_decay_factor(duration), dt);
-            }
-            truth_out.ts_update = ts_now;
-        }
+        auto dt = std::abs(t_tgt - t_src);
+        truth_out.c = UTILS::decay(truth.c, UTILS::get_decay_factor(duration), dt);
         return truth_out;
     }
 
