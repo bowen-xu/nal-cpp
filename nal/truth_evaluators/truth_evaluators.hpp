@@ -1,6 +1,7 @@
 #pragma once
 #include <cmath>
 #include <type_traits>
+#include <algorithm>
 #include "truth_evaluators.decl.hpp"
 #include "../truth_value/truth_value.hpp"
 
@@ -11,6 +12,12 @@ inline double novelty(const auto &truth_src, const auto &truth_tgt)
              std::is_same_v<std::decay_t<decltype(truth_tgt)>, TruthV>
 {
     return std::abs(truth_src.e() - truth_tgt.e());
+}
+
+inline double novelty(const auto &truthv)
+    requires std::is_same_v<std::decay_t<decltype(truthv)>, TruthV>
+{
+    return std::abs(truthv.e() - 0.5);
 }
 
 inline double novelty_v1(const auto &truth_src, const auto &truth_tgt)
