@@ -67,6 +67,34 @@ public:
         }
     }
 
+    inline void decay0(double ts_now)
+    {
+        /*
+         *  The priority decays exponentially with time. It converges to quality*Q (where Q is a constant, typically
+         * 0.3) The decay factor is (1-durability).
+         *
+         *  | hlf  | 1-durability |
+         *  | ---- | ------------ |
+         *  |    1 |  0.69314718  |
+         *  |    2 |  0.34657359  |
+         *  |    4 |  0.17328680  |
+         *  |    8 |  0.08664340  |
+         *  |   16 |  0.04332170  |
+         *  |   32 |  0.02166085  |
+         *  |   64 |  0.01083042  |
+         *  |  128 |  0.00541521  |
+         *  |  256 |  0.00270761  |
+         *  |  512 |  0.00135380  |
+         *  | 1024 |  0.00067690  |
+         */
+        if (ts_now > this->ts_update)
+        {
+            auto dt = ts_now - this->ts_update;
+            this->ts_update = ts_now;
+            this->priority = this->priority * std::exp(-(1 - this->durability) * dt);
+        }
+    }
+
     inline void excite_p(double a, double stubbornness = 0.1)
     {
         /*
