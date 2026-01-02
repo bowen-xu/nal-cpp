@@ -2,6 +2,8 @@
 
 Core Non-Axiomatic Logic (NAL) numeric and logic components in C++23, focused on truth values, budgets, evaluators, and uncertainty mapping for reuse in C++ and Python projects.
 
+To learn more of Non-Axiomatic Logic, please refer to [*Non-Axiomatic Logic A Model of Intelligent Reasoning (2nd Edition)*](https://www.worldscientific.com/worldscibooks/10.1142/14486?srsltid=AfmBOoo_cAQ0QsiivuIEeB2rI807_w7aTPzMnfRjorvdEtOgwDwZVmZM).
+
 ## Overview
 - Truth value representation and revision: `TruthV`
 - Budgeting and priority mechanism: `budget` module
