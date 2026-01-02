@@ -106,10 +106,14 @@ public:
     // }
 
     static TruthV
-    project(const TruthV &truth, int64_t t_src, int64_t t_tgt, int64_t duration = 20)
+    project(const TruthV &truth, int64_t t_src, int64_t t_tgt, int64_t duration = 20, int64_t thresh_min = 5)
     {
-        auto truth_out = TruthV(truth);
+
         auto dt = std::abs(t_tgt - t_src);
+        if (dt <= thresh_min)
+            return truth;
+        dt -= thresh_min;
+        auto truth_out = TruthV(truth);
         truth_out.c = UTILS::decay(truth.c, UTILS::get_decay_factor(duration), dt);
         return truth_out;
     }
