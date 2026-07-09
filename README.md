@@ -5,16 +5,16 @@ Core Non-Axiomatic Logic (NAL) numeric and logic components in C++23, focused on
 To learn more of Non-Axiomatic Logic, please refer to [*Non-Axiomatic Logic A Model of Intelligent Reasoning (2nd Edition)*](https://www.worldscientific.com/worldscibooks/10.1142/14486?srsltid=AfmBOoo_cAQ0QsiivuIEeB2rI807_w7aTPzMnfRjorvdEtOgwDwZVmZM).
 
 ## Overview
-- Truth value representation and revision: `TruthV`
-- Budgeting and priority mechanism: `budget` module
-- Truth functions and evaluators: `truth_functions`, `truth_evaluators`
-- Extended boolean and uncertainty mapping: `extended_boolean_functions`, `uncertainty_mapping_function`
-- Unified entry header: `nal/nal.hpp`
+- Truth value representation and revision: `TruthValue`
+- Budgeting and priority mechanism: `Budget`
+- Truth functions and evaluators: `TruthFunctions`, `TruthEvaluators`
+- Extended boolean and uncertainty mapping: `ExtendedBooleanFunctions`, `UncertaintyMappingFunction`
+- Unified entry header: `nal/Nal.hpp`
 
 **Layout**
 - `nal/`: core logic implementation
-- `nal/**.py.cpp`: pybind11 bindings
-- `nal/Config.h`: default parameters (`NAL::CONFIG`)
+- `bindings/`: pybind11 binding registration functions (`bind.*`)
+- `nal/Config.hpp`: default parameters (`seqnars::nal::config`)
 - `xmake.lua`: build configuration
 - `refresh_compile_commands.sh`: compilation database helper
 
@@ -22,62 +22,45 @@ To learn more of Non-Axiomatic Logic, please refer to [*Non-Axiomatic Logic A Mo
 Uses `xmake` and pulls `fmt` and `pybind11` via package management.
 
 ```bash
-xmake f -m release
+xmake config -m release
 xmake build
 ```
 
-Target: `non-axiomatic-logic` (static library).
+Target: `nal_cpp` (static library).
 
 ## C++ Example
 ```cpp
-#include "nal/nal.hpp"
+#include "nal/Nal.hpp"
 
-int main() {
-    NAL::TruthV a(0.6, 0.9);
-    NAL::TruthV b(0.4, 0.8);
+auto main() -> int
+{
+    seqnars::nal::TruthValue a(0.6, 0.9);
+    seqnars::nal::TruthValue b(0.4, 0.8);
     a.revise(b);
     return 0;
 }
 ```
 
 ## Python Bindings
-The repository includes pybind11 bindings in `nal/*.py.cpp` and `nal/*.py.hpp` (entry at `nal/nal.py.cpp`).
-To build a Python module, switch the target to a shared library and define the `PYMODULE` macro in your build setup.
+The repository includes pybind11 binding registration functions in `bindings/bind.*.cpp` and `bindings/bind.*.hpp`.
 
-**Generate Python Module**
+`nal-cpp` is not intended to build a standalone `nal` Python extension module in the parent SeqNARS project. Instead, it exposes callable binding functions that the parent `mind` extension module can call while registering `mind.nal`.
 
-1. Clone the repo. Suppose the directory is `./nal-cpp`.
-2. Copy the file `_generate_stub.py` (in `https://github.com/bowen-xu/python-cpp-example/blob/main/_generate_stub.py`) to the root
-3. Create an xmake file for building the module. Example:
-```lua
-add_rules("mode.debug", "mode.release", "mode.releasedbg")
-set_languages("cxx23")
+Entry points:
 
-add_requires("pybind11", {system = false})
-
-includes("nal-cpp")
-
-local project_root = path.join(os.scriptdir(), ".")
-local py_root = project_root
-
-target("nal")
-    add_defines("PYMODULE")
-    add_rules("python.module")
-    add_packages("pybind11")
-    add_packages("fmt")
-    add_deps("non-axiomatic-logic")
-    add_files(nal_pybind_srcs)
-
-
-    local module_dir = path.join(py_root, "./")
-    set_targetdir(module_dir)
-
-    after_build(function (target)
-        cprint("${blue}Generate stub for " .. target:name() .. "...")
-        local py = os.getenv("CONDA_PREFIX") and (os.getenv("CONDA_PREFIX") .. "/bin/python") or "python"
-        cprint("${yellow}Using python: " .. py)
-        os.exec(py .. " --version")
-        os.exec(py .. " " .. project_root .. "/_generate_stub.py " .. " --root " .. module_dir .. " -p " .. target:name() .. " --single True")
-    end)
+```cpp
+seqnars::nal::pybind_decl__nal(py::module_ &m);
+seqnars::nal::pybind__nal(py::module_ &m);
 ```
-4. Compile by running `xmake build`.
+
+Expected parent-module pattern:
+
+```cpp
+PYBIND11_MODULE(mind, m)
+{
+    auto nal = m.def_submodule("nal");
+
+    seqnars::nal::pybind_decl__nal(nal);
+    seqnars::nal::pybind__nal(nal);
+}
+```

@@ -1,22 +1,32 @@
 add_rules("mode.debug", "mode.release", "mode.releasedbg")
 set_languages("cxx23")
 
-add_requires("pybind11")
-add_requires("fmt")
-
-nal_pybind_srcs = "deps/nal-cpp/nal/nal.py.cpp"
-
-local srcs = os.files("nal/**.py.cpp")
-nal_pybind_srcs = {}
-for _, v in ipairs(srcs) do
-    table.insert(nal_pybind_srcs, path.join(os.scriptdir(), v))
+if is_mode("debug") then
+    add_cxxflags("-Wall", "-Wextra", "-Wpedantic", {force = true})
 end
 
+add_requires("pybind11", {system = false})
+add_requires("fmt")
+add_requires("gtest")
 
-target("non-axiomatic-logic")
+local nal_srcs = os.files("nal/*.cpp")
+local binding_srcs = os.files("bindings/*.cpp")
+
+target("nal_cpp")
     set_kind("static")
-    add_packages("pybind11")
-    add_packages("fmt")
+
+    add_packages("pybind11", {public = true})
+    add_packages("fmt", {public = true})
 
     add_includedirs(".", {public = true})
-    add_files(srcs)
+    add_files(nal_srcs)
+    add_files(binding_srcs)
+
+target("test_nal")
+    set_kind("binary")
+
+    add_packages("fmt")
+    add_packages("gtest")
+    add_includedirs(".")
+    add_files(nal_srcs)
+    add_files("tests/*.cpp")

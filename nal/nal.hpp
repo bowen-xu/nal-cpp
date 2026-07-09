@@ -1,6 +1,0 @@
-#include "./extended_boolean_functions/extended_boolean_functions.hpp"
-#include "./uncertainty_mapping_function/uncertainty_mapping_function.hpp"
-#include "./truth_value/truth_value.hpp"
-#include "./truth_functions/truth_functions.hpp"
-#include "./truth_evaluators/truth_evaluators.hpp"
-#include "./budget/budget.hpp"
