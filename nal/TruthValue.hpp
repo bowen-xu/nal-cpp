@@ -7,17 +7,11 @@
 #include "Utils.hpp"
 
 #include <cmath>
-#include <stdexcept>
 
 namespace seqnars::nal
 {
 
 inline TruthValue::TruthValue(double f, double c, double k) : f(f), c(c), k(k) {}
-
-inline TruthValue::TruthValue(double f, double c, bool is_temporal, int64_t ts_update, double k)
-    : f(f), c(c), k(k), ts_update(ts_update), is_eternal(!is_temporal)
-{
-}
 
 inline TruthValue::TruthValue(double k) : f(config::F), c(config::C), k(k) {}
 
@@ -40,28 +34,10 @@ inline auto TruthValue::set_w(double w_p, double w) -> void
     this->c = w / (w + this->k);
 }
 
-inline auto TruthValue::set_w(double w_p, double w, int64_t ts_update) -> void
-{
-    this->set_w(w_p, w);
-    if (!this->is_eternal)
-        this->ts_update = ts_update;
-    else
-        throw std::runtime_error("Cannot set timestamp for eternal truth");
-}
-
 inline auto TruthValue::set_fc(double f, double c) -> void
 {
     this->f = f;
     this->c = c;
-}
-
-inline auto TruthValue::set_fc(double f, double c, int64_t ts_update) -> void
-{
-    this->set_fc(f, c);
-    if (!this->is_eternal)
-        this->ts_update = ts_update;
-    else
-        throw std::runtime_error("Cannot set timestamp for eternal truth");
 }
 
 inline auto TruthValue::revise(const TruthValue &truth) -> void

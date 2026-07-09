@@ -3,7 +3,6 @@
 #include <gtest/gtest.h>
 
 #include <cmath>
-#include <stdexcept>
 #include <utility>
 #include <vector>
 
@@ -47,19 +46,6 @@ TEST(TruthValue, ConvertsBetweenFrequencyConfidenceAndWeights)
     auto from_w = TruthValue::from_w(2.0, 4.0, 2.0);
     expect_near(from_w.f, 0.5);
     expect_near(from_w.c, 2.0 / 3.0);
-}
-
-TEST(TruthValue, UpdatesTemporalTimestampsOnlyForTemporalValues)
-{
-    auto temporal = TruthValue(0.6, 0.7, true, 10, 1.0);
-    temporal.set_fc(0.8, 0.9, 12);
-    EXPECT_EQ(temporal.ts_update, 12);
-    expect_near(temporal.f, 0.8);
-    expect_near(temporal.c, 0.9);
-
-    auto eternal = TruthValue(0.6, 0.7, 1.0);
-    EXPECT_THROW(eternal.set_w(0.2, 0.5, 12), std::runtime_error);
-    EXPECT_THROW(eternal.set_fc(0.8, 0.9, 12), std::runtime_error);
 }
 
 TEST(TruthValue, RevisesAndProjectsTruth)

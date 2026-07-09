@@ -12,11 +12,7 @@ struct TruthValue
     double c;
     double k;
 
-    int64_t ts_update = -1;
-    bool is_eternal = true;
-
     TruthValue(double f, double c, double k = 1.0);
-    TruthValue(double f, double c, bool is_temporal, int64_t ts_update = -1, double k = 1.0);
     TruthValue(double k = 1.0);
 
     static auto from_w(double w_p, double w, double k = 1.0) -> TruthValue;
@@ -25,9 +21,7 @@ struct TruthValue
     auto w_p() const -> double;
     auto w_m() const -> double;
     auto set_w(double w_p, double w) -> void;
-    auto set_w(double w_p, double w, int64_t ts_update) -> void;
     auto set_fc(double f, double c) -> void;
-    auto set_fc(double f, double c, int64_t ts_update) -> void;
     auto revise(const TruthValue &truth) -> void;
 
     static auto project(const TruthValue &truth, int64_t t_src, int64_t t_tgt, int64_t duration = 20,
