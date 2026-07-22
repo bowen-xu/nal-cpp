@@ -13,7 +13,7 @@ inline auto fc_to_w(float, float c, float k) -> float { return k * c / (1 - c); 
 
 inline auto fc_to_w_minus(float f, float c, float k) -> float { return k * (1 - f) * c / (1 - c); }
 
-inline auto w_to_f(float w_plus, float w) -> float { return w > 1e-8 ? w_plus / w : 0.0; }
+inline auto w_to_f(float w_plus, float w) -> float { return w > 1e-8 ? w_plus / w : 0.5; }
 
 inline auto w_to_c(float w, float k) -> float { return w / (w + k); }
 
