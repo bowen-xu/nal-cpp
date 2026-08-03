@@ -62,11 +62,10 @@ TEST(TruthValue, RevisesAndProjectsTruth)
 
 TEST(Budget, UpdatesPriority)
 {
-    auto budget = Budget(0.5, Budget::calc_durability(2.0), 0.5);
+    auto budget = Budget(0.5, Budget::calc_durability(2.0), 0.5, 0);
 
     expect_near(Budget::calc_durability(2.0), 1.0 + std::log(0.5) / 2.0);
 
-    budget.ts_update = 0;
     budget.decay(2.0);
     expect_near(budget.priority, 0.325);
 
@@ -75,6 +74,13 @@ TEST(Budget, UpdatesPriority)
 
     budget.inhibit_p(0.5, 0.0);
     expect_near(budget.priority, 0.23);
+}
+
+TEST(Budget, RetainsItsCreationTimestamp)
+{
+    auto budget = Budget(0.8, 0.9, 0.5, 4);
+
+    EXPECT_EQ(budget.ts_update, 4);
 }
 
 TEST(TruthFunctions, ComputeRepresentativeInferenceResults)

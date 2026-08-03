@@ -8,8 +8,8 @@
 namespace seqnars::nal
 {
 
-inline Budget::Budget(double priority, double durability, double quality)
-    : priority(priority), durability(durability), quality(quality)
+inline Budget::Budget(double priority, double durability, double quality, int64_t ts_update)
+    : priority(priority), durability(durability), quality(quality), ts_update(ts_update)
 {
 }
 

@@ -16,8 +16,9 @@ auto pybind__budget(py::module_ &m) -> void
     auto pyClass_ = py::reinterpret_borrow<classType>(pyObj_);
 
     pyClass_
-        .def(py::init<double, double, double>(), py::arg("p") = Budget::PRIORITY_DEFAULT,
-             py::arg("d") = Budget::DURABILITY_DEFAULT, py::arg("q") = Budget::QUALITY_DEFAULT)
+        .def(py::init<double, double, double, int64_t>(), py::arg("p") = Budget::PRIORITY_DEFAULT,
+             py::arg("d") = Budget::DURABILITY_DEFAULT, py::arg("q") = Budget::QUALITY_DEFAULT,
+             py::arg("ts_update") = -1)
         .def_readwrite("p", &Budget::priority)
         .def_readwrite("d", &Budget::durability)
         .def_readwrite("q", &Budget::quality)

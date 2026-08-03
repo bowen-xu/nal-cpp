@@ -13,10 +13,10 @@ struct Budget
     double priority;
     double durability;
     double quality;
-    int64_t ts_update = -1;
+    int64_t ts_update;
 
-    Budget(double priority = PRIORITY_DEFAULT, double durability = DURABILITY_DEFAULT,
-           double quality = QUALITY_DEFAULT);
+    Budget(double priority = PRIORITY_DEFAULT, double durability = DURABILITY_DEFAULT, double quality = QUALITY_DEFAULT,
+           int64_t ts_update = -1);
 
     static auto calc_durability(double half_life_period) -> double;
 
