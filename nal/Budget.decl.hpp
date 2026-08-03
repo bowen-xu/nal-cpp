@@ -9,6 +9,7 @@ struct Budget
     inline static constexpr double PRIORITY_DEFAULT = 0.9;
     inline static constexpr double DURABILITY_DEFAULT = 0.9;
     inline static constexpr double QUALITY_DEFAULT = 0.5;
+    inline static constexpr double QUALITY_FLOOR_RATIO_DEFAULT = 0.3;
 
     double priority;
     double durability;
@@ -20,7 +21,7 @@ struct Budget
 
     static auto calc_durability(double half_life_period) -> double;
 
-    auto decay(double ts_now) -> void;
+    auto decay(double ts_now, double quality_floor_ratio = QUALITY_FLOOR_RATIO_DEFAULT) -> void;
     auto decay0(double ts_now) -> void;
     auto excite_p(double a, double stubbornness = 0.1) -> void;
     auto inhibit_p(double a, double stubbornness = 0.1) -> void;

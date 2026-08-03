@@ -83,6 +83,16 @@ TEST(Budget, RetainsItsCreationTimestamp)
     EXPECT_EQ(budget.ts_update, 4);
 }
 
+TEST(Budget, DecaysTowardAConfigurableQualityFloor)
+{
+    auto budget = Budget(0.8, Budget::calc_durability(2.0), 0.5, 0);
+
+    budget.decay(2.0, 0.6);
+
+    expect_near(budget.priority, 0.55);
+    EXPECT_EQ(budget.ts_update, 2);
+}
+
 TEST(TruthFunctions, ComputeRepresentativeInferenceResults)
 {
     auto truth_a = TruthValue(0.8, 0.9, 1.0);

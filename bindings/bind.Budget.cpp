@@ -23,7 +23,8 @@ auto pybind__budget(py::module_ &m) -> void
         .def_readwrite("d", &Budget::durability)
         .def_readwrite("q", &Budget::quality)
         .def_readwrite("ts_update", &Budget::ts_update)
-        .def("decay", &Budget::decay, py::arg("ts_now"))
+        .def("decay", &Budget::decay, py::arg("ts_now"),
+             py::arg("quality_floor_ratio") = Budget::QUALITY_FLOOR_RATIO_DEFAULT)
         .def("excite_p", &Budget::excite_p, py::arg("a"), py::arg("stubbornness") = 0.1)
         .def("inhibit_p", &Budget::inhibit_p, py::arg("a"), py::arg("stubbornness") = 0.1)
         .def_static("calc_durability", &Budget::calc_durability, py::arg("half_life_period"))

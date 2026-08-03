@@ -18,14 +18,14 @@ inline auto Budget::calc_durability(double half_life_period) -> double
     return 1.0 + std::log(0.5) / half_life_period;
 }
 
-inline auto Budget::decay(double ts_now) -> void
+inline auto Budget::decay(double ts_now, double quality_floor_ratio) -> void
 {
-    static const auto Q = 0.3;
+    const auto ratio = std::clamp(quality_floor_ratio, 0.0, 1.0);
     if (ts_now > this->ts_update)
     {
         const auto dt = ts_now - this->ts_update;
         this->ts_update = ts_now;
-        const auto q = this->quality * Q;
+        const auto q = this->quality * ratio;
         this->priority = q + (this->priority - q) * std::exp(-(1 - this->durability) * dt);
     }
 }
