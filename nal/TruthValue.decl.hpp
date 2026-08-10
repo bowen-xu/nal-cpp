@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstdint>
 #include <string>
 
 namespace seqnars::nal
@@ -24,8 +23,8 @@ struct TruthValue
     auto set_fc(double f, double c) -> void;
     auto revise(const TruthValue &truth) -> void;
 
-    static auto project(const TruthValue &truth, int64_t t_src, int64_t t_tgt, int64_t duration = 20,
-                        int64_t thresh_min = 5) -> TruthValue;
+    static auto project(const TruthValue &truth, double t_src, double t_tgt, double duration = 20.0,
+                        double thresh_min = 5.0) -> TruthValue;
     static auto calc_decay_factor(double half_life_period) -> double;
 
     auto repr() const -> std::string;

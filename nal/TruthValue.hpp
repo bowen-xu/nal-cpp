@@ -53,8 +53,8 @@ inline auto TruthValue::revise(const TruthValue &truth) -> void
     this->set_w(w_p, w);
 }
 
-inline auto TruthValue::project(const TruthValue &truth, int64_t t_src, int64_t t_tgt, int64_t duration,
-                                int64_t thresh_min) -> TruthValue
+inline auto TruthValue::project(const TruthValue &truth, double t_src, double t_tgt, double duration,
+                                double thresh_min) -> TruthValue
 {
     auto dt = std::abs(t_tgt - t_src);
     if (dt <= thresh_min)
